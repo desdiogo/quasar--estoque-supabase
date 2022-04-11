@@ -59,7 +59,7 @@ module.exports = configure(function (/* ctx */) {
         node: 'node16'
       },
 
-      vueRouterMode: 'history' // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -68,7 +68,10 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        SUPABASE_URL: 'https://scvatuxfijoufqqshrxj.supabase.co',
+        SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdmF0dXhmaWpvdWZxcXNocnhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDk1OTgzMDEsImV4cCI6MTk2NTE3NDMwMX0.0k4Kfo-uIPevBJf4e0Q0plYIT7YI5cGhy9O0NCcc_dE'
+      }
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
