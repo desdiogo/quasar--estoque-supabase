@@ -9,10 +9,16 @@
         <q-input
           label="Email"
           v-model="form.email"
+          lazy-rules
+          :rules="rules.email"
+          type="email"
         />
         <q-input
           label="Password"
           v-model="form.password"
+          lazy-rules
+          :rules="rules.password"
+          type="password"
         />
         <div class="q-pt-md">
           <q-btn
@@ -54,9 +60,13 @@ import { reactive } from 'vue'
 import { useAuthUser } from 'src/composables/useAuthUser'
 import { useRouter } from 'vue-router'
 import { ApiError } from '@supabase/supabase-js'
+import { useNotify } from 'src/composables/useNotify'
+import { useRules } from 'src/composables/useRules'
 
 const router = useRouter()
 const { login } = useAuthUser()
+const { notifySuccess, notifyError } = useNotify()
+const rules = useRules
 
 const form = reactive({
   email: '',
@@ -66,10 +76,11 @@ const form = reactive({
 async function handleLogin () {
   try {
     await login(form)
+    notifySuccess('Login successful')
     router.push({ name: 'me' })
   } catch (err) {
     const error = err as ApiError
-    alert(error.message)
+    notifyError(error.message)
   }
 }
 </script>

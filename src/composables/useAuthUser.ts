@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { useSupabase } from 'boot/supabase'
-import { Provider, User } from '@supabase/supabase-js'
+import { Provider, User, UserAttributes } from '@supabase/supabase-js'
 
 interface IMeta {
   name: string;
@@ -70,7 +70,7 @@ export function useAuthUser () {
     return user
   }
 
-  async function update (data: any) {
+  async function update (data: UserAttributes) {
     const {
       user,
       error

@@ -9,10 +9,13 @@
         <q-input
           label="Email"
           v-model="form.email"
+          lazy-rules
+          type="email"
+          :rules="rules.email"
         />
         <div class="q-pt-md q-gutter-y-sm">
           <q-btn
-            label="Send reset email"
+            label="Send new password"
             color="primary"
             class="full-width"
             outline
@@ -36,22 +39,26 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 import { useAuthUser } from 'src/composables/useAuthUser'
-import { useRouter } from 'vue-router'
 import { ApiError } from '@supabase/supabase-js'
+import { useRules } from 'src/composables/useRules'
+import { useNotify } from 'src/composables/useNotify'
 
 const { sendPasswordResetEmail } = useAuthUser()
+const { notifySuccess, notifyError } = useNotify()
 
 const form = reactive({
   email: ''
 })
 
+const { rules } = useRules()
+
 async function handleForgotPassword () {
   try {
     await sendPasswordResetEmail(form.email)
-    alert(`Password reset email sent to ${form.email}`)
+    notifySuccess(`Password reset email sent to ${form.email}`)
   } catch (err) {
     const error = err as ApiError
-    alert(error.message)
+    notifyError(error.message)
   }
 }
 </script>

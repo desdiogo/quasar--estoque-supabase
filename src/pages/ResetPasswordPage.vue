@@ -9,6 +9,9 @@
         <q-input
           label="Password"
           v-model="form.password"
+          lazy-rules
+          :rules="rules.password"
+          type="password"
         />
         <div class="q-pt-md q-gutter-y-sm">
           <q-btn
@@ -30,10 +33,14 @@ import { reactive } from 'vue'
 import { useAuthUser } from 'src/composables/useAuthUser'
 import { useRouter, useRoute } from 'vue-router'
 import { ApiError } from '@supabase/supabase-js'
+import { useNotify } from 'src/composables/useNotify'
+import { useRules } from 'src/composables/useRules'
 
 const router = useRouter()
 const route = useRoute()
 const { resetPassword } = useAuthUser()
+const { notifySuccess, notifyError } = useNotify()
+const { rules } = useRules()
 
 const form = reactive({
   password: ''
@@ -44,10 +51,11 @@ const token = route.query.token as string
 async function handleResetPassword () {
   try {
     await resetPassword(token, form.password)
+    notifySuccess('Password reset successfully')
     router.push({ name: 'login' })
   } catch (err) {
     const error = err as ApiError
-    alert(error.message)
+    notifyError(error.message)
   }
 }
 </script>
