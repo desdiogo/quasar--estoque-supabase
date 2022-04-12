@@ -10,7 +10,10 @@
         row-key="id"
         :loading="loading"
       >
-        <template #top-right>
+        <template
+          #top-right
+          v-if="$q.platform.is.desktop"
+        >
           <q-btn
             icon="mdi-plus"
             label="Add new"
@@ -47,6 +50,18 @@
         </template>
       </q-table>
     </div>
+    <q-page-sticky
+      v-if="$q.platform.is.mobile"
+      position="bottom-right"
+      :offset="[18,18]"
+    >
+      <q-btn
+        icon="mdi-plus"
+        color="primary"
+        fab
+        :to="{ name: 'form-category' }"
+      />
+    </q-page-sticky>
   </q-page>
 </template>
 
@@ -108,7 +123,7 @@ function handleRemove (category: Category) {
   try {
     $q.dialog({
       title: 'Delete category',
-      message: 'Confirm to delete this category?',
+      message: `Confirm to delete category ${category.name}?`,
       cancel: true,
       persistent: true
     }).onOk(async () => {
