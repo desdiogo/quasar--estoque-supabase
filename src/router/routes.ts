@@ -4,6 +4,9 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/LoginLayout.vue'),
+    meta: {
+      noAuth: true
+    },
     children: [
       {
         path: '',
@@ -52,12 +55,23 @@ const routes: RouteRecordRaw[] = [
         path: 'me',
         name: 'me',
         component: () => import('pages/MePage.vue')
+      },
+      {
+        path: 'category',
+        name: 'category',
+        component: () => import('pages/category/ListPage.vue')
+      },
+      {
+        path: 'form-category/:id?',
+        name: 'form-category',
+        component: () => import('pages/category/FormPage.vue')
       }
     ]
   },
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
+    component: () => import('pages/ErrorNotFound.vue'),
+    name: 'error-404'
   }
 ]
 

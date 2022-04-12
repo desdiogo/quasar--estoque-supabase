@@ -55,7 +55,7 @@ export default route(function (/* { store, ssrContext } */) {
 
     if (
       isLoggedIn() &&
-      !to.meta.requiresAuth
+      to.meta.noAuth
     ) {
       return { name: 'me' }
     }

@@ -2,6 +2,7 @@ import 'vue-router'
 
 declare module 'vue-router' {
   interface RouteMeta {
-    requiresAuth: boolean
+    requiresAuth?: boolean,
+    noAuth?: boolean,
   }
 }
