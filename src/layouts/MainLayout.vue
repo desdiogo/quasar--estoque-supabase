@@ -70,6 +70,11 @@ const essentialLinks = [
     title: 'Category',
     icon: 'mdi-shape-outline',
     to: '/category'
+  },
+  {
+    title: 'Product',
+    icon: 'mdi-archive',
+    to: '/product'
   }
 ]
 const router = useRouter()

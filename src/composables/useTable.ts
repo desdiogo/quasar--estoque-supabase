@@ -1,6 +1,7 @@
 export function useTable () {
   const table = {
-    categories: 'categories'
+    categories: 'categories',
+    products: 'products'
   }
 
   return {
