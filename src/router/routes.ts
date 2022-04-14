@@ -42,6 +42,17 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/',
+    component: () => import('layouts/LoginLayout.vue'),
+    children: [
+      {
+        path: 'product-public/:id',
+        name: 'product-public',
+        component: () => import('pages/product/ListPublicPage.vue')
+      }
+    ]
+  },
+  {
+    path: '/',
     component: () => import('layouts/MainLayout.vue'),
     meta: {
       requiresAuth: true

@@ -2,14 +2,24 @@
   <q-page padding>
     <div class="row">
       <q-table
-        title="Products"
         :rows="products"
         :columns="columns"
         class="col-12"
-        title-class="text-h6"
         row-key="id"
         :loading="loading"
       >
+        <template #top-left>
+          <span class="text-h6">Products</span>
+          <q-btn
+            label="My Store"
+            dense
+            outline
+            class="q-ml-sm"
+            icon="mdi-store"
+            color="primary"
+            @click="handleGoToStore"
+          />
+        </template>
         <template
           #top-right
           v-if="$q.platform.is.desktop"
@@ -91,18 +101,20 @@ import { useTable } from 'src/composables/useTable'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useFormat } from 'src/utils/format'
+import { useAuthUser } from 'src/composables/useAuthUser'
 
 interface Product {
   id: number
   name: string
 }
 
-const { list, remove } = useApi()
+const { listPublic, remove } = useApi()
 const { notifyError, notifySuccess } = useNotify()
 const { table } = useTable()
 const router = useRouter()
 const $q = useQuasar()
 const { formatCurrency } = useFormat()
+const { user } = useAuthUser()
 
 const columns = [
   {
@@ -148,7 +160,8 @@ const loading = ref(true)
 
 async function handleListProducts () {
   try {
-    products.value = await list(table.products)
+    const id = user.value?.id as string
+    products.value = await listPublic(table.products, id)
     loading.value = false
   } catch (err) {
     const error = err as ApiError
@@ -182,6 +195,11 @@ function handleRemove (product: Product) {
     $q.loading.hide()
     notifyError(error.message)
   }
+}
+
+function handleGoToStore () {
+  const idUser = user.value?.id
+  router.push({ name: 'product-public', params: { id: idUser } })
 }
 
 onMounted(() => {

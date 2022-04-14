@@ -8,6 +8,18 @@
         class="col-md-7 col-xs-12 col-sm-12 q-gutter-y-md"
         @submit.prevent="handleSubmit"
       >
+        <q-file
+          v-model="img"
+          label="Image"
+          stack-label
+          type="file"
+          accept="image/*"
+          clearable
+        >
+          <template v-slot:prepend>
+            <q-icon name="mdi-image" />
+          </template>
+        </q-file>
         <q-input
           v-model="form.name"
           label="Name"
@@ -70,6 +82,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRules } from 'src/composables/useRules'
 import { useTable } from 'src/composables/useTable'
+import { useStorage } from 'src/composables/useStorage'
 import { useRouter, useRoute } from 'vue-router'
 import { useApi } from 'src/composables/useApi'
 import { ApiError } from '@supabase/supabase-js'
@@ -81,7 +94,8 @@ interface Product {
   name: string,
   description?: string,
   amount?: number,
-  price?: number,
+  price?: number
+  img_url?: string | null
   user_id?: string,
   category_id?: number | null,
   created_at?: string
@@ -94,7 +108,8 @@ interface Category {
 
 const { rules } = useRules()
 const { table } = useTable()
-const { create, getById, update, list } = useApi()
+const { storage } = useStorage()
+const { create, getById, update, list, uploadImg } = useApi()
 const { notifySuccess, notifyError } = useNotify()
 const router = useRouter()
 const route = useRoute()
@@ -105,8 +120,11 @@ const form = ref<Product>({
   description: '',
   amount: 0,
   price: 0,
+  img_url: '',
   category_id: null
 })
+
+const img = ref<File[]>([])
 
 const categories = ref<Category[]>([])
 
@@ -133,6 +151,10 @@ const isUpdate = computed(() => !!route.params.id)
 
 async function handleSubmit () {
   try {
+    if (img.value.length > 0) {
+      form.value.img_url = await uploadImg(storage.products, img.value[0])
+    }
+
     if (isUpdate.value) {
       $q.loading.show({
         message: 'Updating product...'
