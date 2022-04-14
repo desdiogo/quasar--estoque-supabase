@@ -53,11 +53,7 @@ import { useQuery } from 'vue-query'
 import { useTable } from 'src/composables/useTable'
 import { useRoute } from 'vue-router'
 import { useFormat } from 'src/utils/format'
-
-interface Product {
-  id: number
-  name: string
-}
+import { Product } from 'src/models/Product'
 
 const { listPublic } = useApi()
 const { notifyError } = useNotify()
