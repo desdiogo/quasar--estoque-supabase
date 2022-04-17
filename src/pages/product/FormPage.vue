@@ -88,6 +88,7 @@ import { useApi } from 'src/composables/useApi'
 import { ApiError } from '@supabase/supabase-js'
 import { useNotify } from 'src/composables/useNotify'
 import { useQuasar } from 'quasar'
+import { useAuthUser } from 'src/composables/useAuthUser'
 
 interface Product {
   id?: number
@@ -109,11 +110,12 @@ interface Category {
 const { rules } = useRules()
 const { table } = useTable()
 const { storage } = useStorage()
-const { create, getById, update, list, uploadImg } = useApi()
+const { create, getById, update, listPublic, uploadImg } = useApi()
 const { notifySuccess, notifyError } = useNotify()
 const router = useRouter()
 const route = useRoute()
 const $q = useQuasar()
+const { user } = useAuthUser()
 
 const form = ref<Product>({
   name: '',
@@ -140,7 +142,7 @@ const product = computed((): Product => {
 
 async function handleListCategories () {
   try {
-    categories.value = await list(table.categories)
+    categories.value = await listPublic(table.categories, user.value?.id as string)
   } catch (err) {
     const error = err as ApiError
     notifyError(error.message)

@@ -25,6 +25,8 @@
         row-key="id"
         :loading="loading"
         :filter="filter"
+        v-model:pagination="initialPagination"
+        hide-pagination
       >
         <template #top-right>
           <q-input
@@ -43,11 +45,11 @@
           </q-input>
         </template>
         <template #item="props">
-          <div class="q-pa-xs col-xs-12 col-sm6 col-md-4">
+          <div class="q-pa-xs col-xs-12 col-sm6 col-md-3">
             <q-card
               class="cursor-pointer"
-              v-ripple:primary
               @click="handleShowDetails(props.row)"
+              v-ripple:primary
             >
               <q-card-section class="text-center">
                 <q-img :src="props.row.img_url" :alt="`Image ${props.row.name}`" :ratio="4/3" />
@@ -56,8 +58,28 @@
               </q-card-section>
             </q-card>
           </div>
+          <div
+            class="col-12"
+            v-if="props.rowIndex === 3 && config.img_paralax"
+          >
+            <q-parallax :height="200" :speed="0.5">
+              <template v-slot:media>
+                <img :src="config.img_paralax" alt="Img paralax">
+              </template>
+
+              <h3 class="text-white">{{ config.name }}</h3>
+            </q-parallax>
+          </div>
         </template>
       </q-table>
+    </div>
+    <div class="row justify-center">
+      <q-pagination
+        v-model="initialPagination.page"
+        direction-links
+        :max="pagesNumber"
+        @update:model-value="handleScrollToTop"
+      />
     </div>
   </q-page>
   <dialog-product-details
@@ -68,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useApi } from 'src/composables/useApi'
 import { useNotify } from 'src/composables/useNotify'
 import { ApiError } from '@supabase/supabase-js'
@@ -78,6 +100,7 @@ import { useRoute } from 'vue-router'
 import { useFormat } from 'src/utils/format'
 import { Product } from 'src/models/Product'
 import DialogProductDetails from 'components/DialogProductDetails.vue'
+import { useConfig } from 'stores/config'
 
 interface Category {
   id: number
@@ -89,6 +112,7 @@ const { notifyError } = useNotify()
 const { table } = useTable()
 const { formatCurrency } = useFormat()
 const route = useRoute()
+const config = useConfig()
 
 const columns = [
   {
@@ -120,6 +144,13 @@ const columns = [
     sortable: true
   }
 ]
+
+const initialPagination = ref({
+  page: 1,
+  rowsPerPage: 8
+})
+
+const pagesNumber = computed(() => Math.ceil(products.value.length / initialPagination.value.rowsPerPage))
 
 const products = ref<Product[]>([])
 const loading = ref(true)
@@ -161,6 +192,13 @@ async function handleLIstCategories () {
     loading.value = false
     notifyError(error.message)
   }
+}
+
+function handleScrollToTop () {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
 }
 
 onMounted(() => {

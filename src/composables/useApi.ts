@@ -15,6 +15,7 @@ interface Config {
   phone: string,
   primary_color: string,
   secondary_color: string,
+  img_paralax: string,
 }
 
 interface UpdateConfig extends Config {
