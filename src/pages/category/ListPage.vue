@@ -74,17 +74,19 @@ import { useQuery } from 'vue-query'
 import { useTable } from 'src/composables/useTable'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { useAuthUser } from 'src/composables/useAuthUser'
 
 interface Category {
   id: number
   name: string
 }
 
-const { list, remove } = useApi()
+const { listPublic, remove } = useApi()
 const { notifyError, notifySuccess } = useNotify()
 const { table } = useTable()
 const router = useRouter()
 const $q = useQuasar()
+const { user } = useAuthUser()
 
 const columns = [
   {
@@ -106,7 +108,7 @@ const loading = ref(true)
 
 async function handleListCategories () {
   try {
-    categories.value = await list(table.categories)
+    categories.value = await listPublic(table.categories, user.value?.id as string)
     loading.value = false
   } catch (err) {
     const error = err as ApiError

@@ -1,6 +1,20 @@
 <template>
   <q-page padding>
     <div class="row">
+      <q-select
+        outlined
+        v-model="category"
+        :options="categories"
+        label="Category"
+        class="col-12"
+        dense
+        map-options
+        emit-value
+        option-label="name"
+        option-value="id"
+        clearable
+        @update:model-value="handleListProducts"
+      />
       <q-table
         grid
         title="Products"
@@ -65,6 +79,11 @@ import { useFormat } from 'src/utils/format'
 import { Product } from 'src/models/Product'
 import DialogProductDetails from 'components/DialogProductDetails.vue'
 
+interface Category {
+  id: number
+  name: string
+}
+
 const { listPublic } = useApi()
 const { notifyError } = useNotify()
 const { table } = useTable()
@@ -108,10 +127,17 @@ const filter = ref('')
 const showDialogDetails = ref(false)
 const productDetails = ref<Product>({})
 
+const category = ref('')
+const categories = ref<Category[]>([])
+
 async function handleListProducts () {
   try {
     const id = route.params.id as string
-    products.value = await listPublic(table.products, id)
+    if (category.value) {
+      products.value = await listPublic(table.products, id, 'category_id', category.value)
+    } else {
+      products.value = await listPublic(table.products, id)
+    }
     loading.value = false
   } catch (err) {
     const error = err as ApiError
@@ -125,8 +151,21 @@ function handleShowDetails (product: Product) {
   showDialogDetails.value = true
 }
 
+async function handleLIstCategories () {
+  try {
+    const id = route.params.id as string
+    categories.value = await listPublic(table.categories, id)
+    loading.value = false
+  } catch (err) {
+    const error = err as ApiError
+    loading.value = false
+    notifyError(error.message)
+  }
+}
+
 onMounted(() => {
-  useQuery('products', () => handleListProducts, { cacheTime: 1000 * 60 })
+  useQuery('products', () => handleListProducts(), { cacheTime: 1000 * 60 })
+  handleLIstCategories()
 })
 
 </script>

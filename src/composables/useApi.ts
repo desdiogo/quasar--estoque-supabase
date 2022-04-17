@@ -41,11 +41,12 @@ export function useApi () {
     return data
   }
 
-  async function listPublic (table: string, userId: string, columns = '*') {
+  async function listPublic (table: string, userId: string, columnFilter = '', filter = '', columns = '*') {
     const { data, error } = await supabase
       .from(table)
       .select(columns)
       .eq('user_id', userId)
+      .eq(columnFilter, filter)
     if (error) throw error
     return data
   }
