@@ -14,6 +14,7 @@
         <q-toolbar-title>
           {{ config.name || 'Estoque' }}
         </q-toolbar-title>
+        <dark-mode-toggle />
 
         <q-btn-dropdown flat color="white" icon="person">
           <q-list>
@@ -55,6 +56,7 @@
 
 <script lang="ts" setup>
 import EssentialLink from 'components/EssentialLink.vue'
+import DarkModeToggle from 'components/DarkModeToggle.vue'
 import { ref, onMounted } from 'vue'
 import { useAuthUser } from 'src/composables/useAuthUser'
 import { useRouter } from 'vue-router'

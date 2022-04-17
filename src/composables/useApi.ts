@@ -52,6 +52,18 @@ export function useApi () {
     return data
   }
 
+  async function fetchCount (table: string, userId: string) {
+    const { data, error, count } = await supabase
+      .from(table)
+      .select('id', { count: 'exact' })
+      .eq('user_id', userId)
+    if (error) throw error
+    return {
+      data,
+      count
+    }
+  }
+
   async function getById (table: string, id: string, columns = '*') {
     const { data, error } = await supabase
       .from(table)
@@ -138,6 +150,7 @@ export function useApi () {
   return {
     list,
     listPublic,
+    fetchCount,
     getById,
     create,
     update,
