@@ -45,31 +45,37 @@
           </q-input>
         </template>
         <template #item="props">
-          <div class="q-pa-xs col-xs-12 col-sm6 col-md-3">
-            <q-card
-              class="cursor-pointer"
-              @click="handleShowDetails(props.row)"
-              v-ripple:primary
-            >
-              <q-card-section class="text-center">
-                <q-img :src="props.row.img_url" :alt="`Image ${props.row.name}`" :ratio="4/3" />
-                <div class="text-h6">{{ props.row.name }}</div>
-                <div class="text-subtitle2">{{ formatCurrency(props.row.price) }}</div>
-              </q-card-section>
-            </q-card>
-          </div>
-          <div
-            class="col-12"
-            v-if="props.rowIndex === 3 && config.img_paralax"
+          <transition-group
+            appear
+            enter-active-class="animated fadeInLeft"
+            leave-active-class="animated fadeOutLeft"
           >
-            <q-parallax :height="200" :speed="0.5">
-              <template v-slot:media>
-                <img :src="config.img_paralax" alt="Img paralax">
-              </template>
-
-              <h3 class="text-white">{{ config.name }}</h3>
-            </q-parallax>
-          </div>
+            <div class="q-pa-xs col-xs-12 col-sm6 col-md-3" key="card">
+              <q-card
+                class="cursor-pointer"
+                @click="handleShowDetails(props.row)"
+                v-ripple:primary
+              >
+                <q-card-section class="text-center">
+                  <q-img :src="props.row.img_url" :alt="`Image ${props.row.name}`" :ratio="4/3" />
+                  <div class="text-h6">{{ props.row.name }}</div>
+                  <div class="text-subtitle2">{{ formatCurrency(props.row.price) }}</div>
+                </q-card-section>
+              </q-card>
+            </div>
+            <div
+              key="parallax"
+              class="col-12"
+              v-if="props.rowIndex === 3 && config.img_paralax"
+            >
+              <q-parallax :height="200" :speed="0.5">
+                <template v-slot:media>
+                  <img :src="config.img_paralax" alt="Img paralax">
+                </template>
+                <h3 class="text-white">{{ config.name }}</h3>
+              </q-parallax>
+            </div>
+          </transition-group>
         </template>
       </q-table>
     </div>
