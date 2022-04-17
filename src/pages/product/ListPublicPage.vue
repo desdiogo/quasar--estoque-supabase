@@ -30,7 +30,11 @@
         </template>
         <template #item="props">
           <div class="q-pa-xs col-xs-12 col-sm6 col-md-4">
-            <q-card>
+            <q-card
+              class="cursor-pointer"
+              v-ripple:primary
+              @click="handleShowDetails(props.row)"
+            >
               <q-card-section class="text-center">
                 <q-img :src="props.row.img_url" :alt="`Image ${props.row.name}`" :ratio="4/3" />
                 <div class="text-h6">{{ props.row.name }}</div>
@@ -42,6 +46,11 @@
       </q-table>
     </div>
   </q-page>
+  <dialog-product-details
+    :show="showDialogDetails"
+    :product="productDetails"
+    @hide-dialog="showDialogDetails = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -54,6 +63,7 @@ import { useTable } from 'src/composables/useTable'
 import { useRoute } from 'vue-router'
 import { useFormat } from 'src/utils/format'
 import { Product } from 'src/models/Product'
+import DialogProductDetails from 'components/DialogProductDetails.vue'
 
 const { listPublic } = useApi()
 const { notifyError } = useNotify()
@@ -95,6 +105,8 @@ const columns = [
 const products = ref<Product[]>([])
 const loading = ref(true)
 const filter = ref('')
+const showDialogDetails = ref(false)
+const productDetails = ref<Product>({})
 
 async function handleListProducts () {
   try {
@@ -106,6 +118,11 @@ async function handleListProducts () {
     loading.value = false
     notifyError(error.message)
   }
+}
+
+function handleShowDetails (product: Product) {
+  productDetails.value = product
+  showDialogDetails.value = true
 }
 
 onMounted(() => {

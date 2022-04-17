@@ -1,14 +1,37 @@
 import { useSupabase } from 'boot/supabase'
 import { useAuthUser } from 'src/composables/useAuthUser'
 import { v4 as uuidv4 } from 'uuid'
-
+import { useRoute } from 'vue-router'
+import { useTable } from 'src/composables/useTable'
+import { useBrand } from 'src/composables/useBrand'
+import { useConfig } from 'stores/config'
+import { useQuasar } from 'quasar'
 interface Table {
   id?: number,
+}
+
+interface Config {
+  name: string,
+  phone: string,
+  primary_color: string,
+  secondary_color: string,
+}
+
+interface UpdateConfig extends Config {
+  id?: number | null
+  user_id?: string,
+  created_at?: string,
 }
 
 export function useApi () {
   const supabase = useSupabase()
   const { user } = useAuthUser()
+  const route = useRoute()
+  const { table } = useTable()
+  const { setBrand } = useBrand()
+  const $q = useQuasar()
+
+  const config = useConfig()
 
   async function list (table: string, columns = '*') {
     const { data, error } = await supabase
@@ -90,6 +113,26 @@ export function useApi () {
     return publicUrl
   }
 
+  async function getBrand () {
+    $q.loading.show()
+    const id = user.value?.id || route.params.id as string
+    const { data, error } = await supabase
+      .from(table.config)
+      .select('*')
+      .eq('user_id', id)
+      .limit(1)
+    if (error) {
+      $q.loading.hide()
+      throw error
+    }
+
+    if (data.length > 0) {
+      config.updateConfig(data[0] as UpdateConfig)
+      setBrand(config.primary_color, config.secondary_color)
+      $q.loading.hide()
+    }
+  }
+
   return {
     list,
     listPublic,
@@ -97,6 +140,7 @@ export function useApi () {
     create,
     update,
     remove,
-    uploadImg
+    uploadImg,
+    getBrand
   }
 }

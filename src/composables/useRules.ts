@@ -17,6 +17,12 @@ export function useRules () {
     ],
     category: [
       (val: string) => !!val || 'Category is required'
+    ],
+    storeName: [
+      (val: string) => (val && val.length > 0) || 'Store name is required'
+    ],
+    phone: [
+      (val: string) => (val && val.length > 10) || 'Phone is invalid'
     ]
   }
   return {

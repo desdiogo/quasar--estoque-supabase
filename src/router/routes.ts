@@ -86,6 +86,11 @@ const routes: RouteRecordRaw[] = [
         path: 'form-product/:id?',
         name: 'form-product',
         component: () => import('pages/product/FormPage.vue')
+      },
+      {
+        path: 'form-config/:id?',
+        name: 'form-config',
+        component: () => import('pages/config/FormPage.vue')
       }
     ]
   },

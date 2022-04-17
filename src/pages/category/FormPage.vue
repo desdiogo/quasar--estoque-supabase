@@ -90,21 +90,25 @@ async function handleSubmit () {
   }
 }
 
-onMounted(async () => {
+async function handleGetCategory () {
+  try {
+    $q.loading.show({
+      message: 'Loading category...'
+    })
+    const [result]: Category[] = await getById(table.categories, route.params.id as string)
+    form.value = result
+    $q.loading.hide()
+  } catch (e) {
+    $q.loading.hide()
+    const error = e as ApiError
+    notifyError(error.message)
+    router.push({ name: 'error-404' })
+  }
+}
+
+onMounted(() => {
   if (isUpdate.value) {
-    try {
-      $q.loading.show({
-        message: 'Loading category...'
-      })
-      const [result]: Category[] = await getById(table.categories, route.params.id as string)
-      form.value = result
-      $q.loading.hide()
-    } catch (e) {
-      $q.loading.hide()
-      const error = e as ApiError
-      notifyError(error.message)
-      router.push({ name: 'error-404' })
-    }
+    handleGetCategory()
   }
 })
 </script>

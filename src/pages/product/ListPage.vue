@@ -19,6 +19,15 @@
             color="primary"
             @click="handleGoToStore"
           />
+          <q-btn
+            label="Copy link"
+            dense
+            outline
+            class="q-ml-sm"
+            icon="mdi-content-copy"
+            color="primary"
+            @click="handleCopyPublicUrl"
+          />
         </template>
         <template
           #top-right
@@ -99,7 +108,7 @@ import { ApiError } from '@supabase/supabase-js'
 import { useQuery } from 'vue-query'
 import { useTable } from 'src/composables/useTable'
 import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
+import { useQuasar, openURL, copyToClipboard } from 'quasar'
 import { useFormat } from 'src/utils/format'
 import { useAuthUser } from 'src/composables/useAuthUser'
 
@@ -199,7 +208,21 @@ function handleRemove (product: Product) {
 
 function handleGoToStore () {
   const idUser = user.value?.id
-  router.push({ name: 'product-public', params: { id: idUser } })
+  const link = router.resolve({ name: 'product-public', params: { id: idUser } })
+  openURL(window.origin + link.href)
+}
+
+function handleCopyPublicUrl () {
+  const idUser = user.value?.id
+  const link = router.resolve({ name: 'product-public', params: { id: idUser } })
+  const externalLink = window.origin + link.href
+  copyToClipboard(externalLink)
+    .then(() => {
+      notifySuccess('Successfully copied')
+    })
+    .catch(() => {
+      notifyError('Failed to copy')
+    })
 }
 
 onMounted(() => {

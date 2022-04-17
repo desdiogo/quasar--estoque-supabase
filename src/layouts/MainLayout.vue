@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Estoque
+          {{ config.name || 'Estoque' }}
         </q-toolbar-title>
 
         <q-btn-dropdown flat color="white" icon="person">
@@ -55,10 +55,12 @@
 
 <script lang="ts" setup>
 import EssentialLink from 'components/EssentialLink.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuthUser } from 'src/composables/useAuthUser'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { useApi } from 'src/composables/useApi'
+import { useConfig } from 'stores/config'
 
 const essentialLinks = [
   {
@@ -75,11 +77,18 @@ const essentialLinks = [
     title: 'Product',
     icon: 'mdi-archive',
     to: '/product'
+  },
+  {
+    title: 'Config',
+    icon: 'mdi-cog',
+    to: '/form-config'
   }
 ]
 const router = useRouter()
 const $q = useQuasar()
 const { logout } = useAuthUser()
+const { getBrand } = useApi()
+const config = useConfig()
 
 const leftDrawerOpen = ref(false)
 
@@ -98,4 +107,8 @@ function handleLogout () {
     router.replace({ name: 'login' })
   })
 }
+
+onMounted(() => {
+  getBrand()
+})
 </script>
